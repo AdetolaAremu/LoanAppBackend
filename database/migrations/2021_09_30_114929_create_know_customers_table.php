@@ -30,6 +30,7 @@ class CreateKnowCustomersTable extends Migration
             $table->foreignId('nok_country_id')->references('id')->on('countries');
             $table->foreignId('nok_state_id')->references('id')->on('states');
             $table->enum('status', ['pending','successful','failed'])->default('pending');
+            $table->string('rejection_reason')->nullable();
             $table->timestamps();
         });
     }

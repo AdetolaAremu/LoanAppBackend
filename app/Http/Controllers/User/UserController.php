@@ -11,15 +11,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function index()
     {
-        return UserResource::collection(User::get());
-
-        // return UserResource::collection($user, Response::HTTP_ACCEPTED);
+        Gate::authorize('view', 'users');
+        
+        return UserResource::collection(User::get(), Response::HTTP_OK);
     }
 
     public function show($id)
@@ -30,7 +31,26 @@ class UserController extends Controller
             return response(['message' => 'User not found']);
         }
 
-        return new UserResource($user);
+        return (new UserResource($user))->additional([
+            'data' => [
+                'permissions' => $user->permissions()
+            ]
+        ]);
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        Gate::authorize('view', 'users');
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $user->update($request->only('role_id'));
+
+        return response(['message' => 'Role updated successfully']);
     }
 
     public function updateInfo(Request $request)
@@ -64,6 +84,8 @@ class UserController extends Controller
 
     public function destroy($id)
     {
+        Gate::authorize('view', 'users');
+        
         User::destroy($id);
 
         return response(['message' => 'User deleted successfully']);
@@ -73,6 +95,12 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return response($user, Response::HTTP_ACCEPTED);
+        // return response($user, Response::HTTP_ACCEPTED);
+
+        return (new UserResource($user))->additional([
+            'data' => [
+                'permissions' => $user->permissions()
+            ]
+        ]);
     }
 }

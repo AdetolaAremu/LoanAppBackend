@@ -11,6 +11,7 @@ use App\Models\LoanType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class LoanTypeController extends Controller
 {
@@ -23,7 +24,9 @@ class LoanTypeController extends Controller
 
     public function store(LoanTypeRequest $request)
     {
-        $loan = LoanType::create($request->all());
+        Gate::authorize('view', 'users');
+        
+        LoanType::create($request->all());
 
         return response(['message' => 'Loan type created successfully'], Response::HTTP_CREATED);
     }
@@ -41,6 +44,8 @@ class LoanTypeController extends Controller
 
     public function update(UpdateLoanTypeRequest $request, $id)
     {
+        Gate::authorize('view', 'users');
+        
         $loan = LoanType::find($id);
 
         if (!$loan) {

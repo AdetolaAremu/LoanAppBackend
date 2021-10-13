@@ -15,4 +15,14 @@ class LoanApplication extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function loanType()
+    {
+        return $this->belongsTo(LoanType::class, 'loan_type_id');
+    }
+
+    public function guarantor()
+    {
+        return $this->hasOne(LoanGuarantor::class);
+    }
 }

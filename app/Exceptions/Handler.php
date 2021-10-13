@@ -38,4 +38,10 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    // public function render($requests, Throwable $e)
+    // {
+    //     return response(['message' => 'You are not authorized']);
+    //     return response(['message' => $e->getMessage()], status: $e->getCode() ? $e->getCode() : 400);
+    // }
 }

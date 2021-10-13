@@ -21,9 +21,10 @@ class CreateLoanApplicationsTable extends Migration
             $table->string('bank_name');
             $table->string('account_number');
             $table->enum('account_type', ['savings','current']);
-            $table->enum('loan_status', ['pending','successful','failed'])->default('pending');
+            $table->enum('loan_status', ['pending','accepted','failed'])->default('pending');
             $table->boolean('active')->default(0);
             $table->boolean('repaid')->default(0);
+            $table->string('rejection_reason')->nullable();
             $table->timestamps();
         });
     }

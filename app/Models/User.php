@@ -40,6 +40,21 @@ class User extends Authenticatable
 
     public function kyc()
     {
-        return $this->hasMany(KnowCustomer::class);
+        return $this->hasOne(KnowCustomer::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function permissions()
+    {
+        return $this->role->permissions->pluck('name');
+    }
+
+    public function hasAccess($access)
+    {
+        return $this->permissions()->contains($access);
     }
 }

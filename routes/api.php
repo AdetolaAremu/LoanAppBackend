@@ -17,20 +17,22 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/country', [CountryController::class, 'country']);
 Route::get('/state', [CountryController::class, 'state']);
 
-// just to check
-Route::get('/app', [LoanApplicationController::class, 'index']);
-
 Route::middleware(['auth:api'])->group(function () {
+    
+    // logout
+    Route::post('/logout', [AuthController::class, 'logout']);
     
     // user
     Route::group(['prefix' => 'users'], function() {
         Route::get('/', [UserController::class, 'index']);
         Route::get('/{id}', [UserController::class, 'show']);
         Route::put('/{id}', [UserController::class, 'updateInfo']);
-        Route::put('/{id}', [UserController::class, 'updatePassword']);
+        Route::put('/password/{id}', [UserController::class, 'updatePassword']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
-        Route::get('/', [UserController::class, 'currentUser']);
     });
+
+    // get logged in user
+    Route::get('user/currentuser', [UserController::class, 'currentUser']);
 
     // Know your customer verification
     Route::group(['prefix' => 'user/verify'], function() {
@@ -49,5 +51,22 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/{id}', [LoanTypeController::class, 'update']);
         Route::get('/{id}', [LoanTypeController::class, 'show']);
         Route::delete('/{id}', [LoanTypeController::class, 'destroy']);
+    });
+
+    // loan application
+    Route::group(['prefix' => 'loan-application'], function() {
+        Route::get('/', [LoanApplicationController::class, 'index']);
+        Route::post('/', [LoanApplicationController::class, 'store']);
+        Route::get('/{id}', [LoanApplicationController::class, 'show']);
+        Route::put('/{id}', [LoanApplicationController::class, 'update']);
+        Route::delete('/{id}', [LoanApplicationController::class, 'destroy']);
+        Route::get('/status', [LoanApplicationController::class, 'kycCheck']);
+    });
+
+    // Status table
+    Route::group(['prefix' => 'loans'], function() {
+        Route::get('/pendings', [LoanApplicationController::class, 'statusPending']);
+        Route::get('/accepted', [LoanApplicationController::class, 'statusAccepted']);
+        Route::get('/failed', [LoanApplicationController::class, 'statusFailed']);
     });
 });

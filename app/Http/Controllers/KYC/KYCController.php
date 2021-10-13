@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateKYCRequest;
 use App\Models\KnowCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class KYCController extends Controller
 {    
@@ -22,7 +23,7 @@ class KYCController extends Controller
     {
         $kyc = KnowCustomer::get();
 
-        return response($kyc, Response::HTTP_ACCEPTED);
+        return response($kyc, Response::HTTP_OK);
     }
 
     public function show($id)
@@ -33,7 +34,7 @@ class KYCController extends Controller
             return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return response($kyc, Response::HTTP_ACCEPTED);
+        return response($kyc, Response::HTTP_OK);
     }
 
     public function update(UpdateKYCRequest $request, $id)
@@ -51,6 +52,8 @@ class KYCController extends Controller
 
     public function destroy($id)
     {
+        Gate::authorize('view', 'users');
+        
         $kyc = KnowCustomer::find($id);
 
         if (!$kyc) {
@@ -64,6 +67,8 @@ class KYCController extends Controller
 
     public function verifyUser($id, Request $request)
     {
+        Gate::authorize('view', 'users');
+        
         $kyc = KnowCustomer::find($id);
 
         if (!$kyc) {
