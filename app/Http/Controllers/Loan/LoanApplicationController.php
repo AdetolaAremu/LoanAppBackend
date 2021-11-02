@@ -63,25 +63,32 @@ class LoanApplicationController extends Controller
 
     public function update(Request $request, $id)
     {
-        $loan = LoanApplication::where('id', $id)->with('guarantor')->first();
-        $loan->user_id = Auth::user()->id;
-        $loan->loan_type_id = $request->loan_type_id ?? $loan->loan_type_id;
-        $loan->reason = $request->reason ?? $loan->reason;
-        $loan->bank_name = $request->bank_name ?? $loan->bank_name;
-        $loan->account_number = $request->account_number ?? $loan->account_number;
-        $loan->account_type = $request->account_type ?? $loan->account_type;
-        $loan->update();
+        DB::beginTransaction();
+        try {
+            $loan = LoanApplication::where('id', $id)->with('guarantor')->first();
+            $loan->user_id = Auth::user()->id;
+            $loan->loan_type_id = $request->loan_type_id ?? $loan->loan_type_id;
+            $loan->reason = $request->reason ?? $loan->reason;
+            $loan->bank_name = $request->bank_name ?? $loan->bank_name;
+            $loan->account_number = $request->account_number ?? $loan->account_number;
+            $loan->account_type = $request->account_type ?? $loan->account_type;
+            $loan->update();
 
-        $guarantor = LoanGuarantor::where('loan_application_id', $loan->id)->first();
-        $guarantor->loan_application_id = $loan->id;
-        $guarantor->full_name = $request->full_name ?? $guarantor->full_name;
-        $guarantor->address = $request->address ?? $guarantor->address;
-        $guarantor->phone = $request->phone ?? $guarantor->phone;
-        $guarantor->relationship = $request->relationship ?? $guarantor->relationship;
-        $guarantor->email = $request->email ?? $guarantor->email;
-        $guarantor->update();
-
-        return response(['message' => 'Loan Application updated successfully'], Response::HTTP_ACCEPTED);
+            $guarantor = LoanGuarantor::where('loan_application_id', $loan->id)->first();
+            $guarantor->loan_application_id = $loan->id;
+            $guarantor->full_name = $request->full_name ?? $guarantor->full_name;
+            $guarantor->address = $request->address ?? $guarantor->address;
+            $guarantor->phone = $request->phone ?? $guarantor->phone;
+            $guarantor->relationship = $request->relationship ?? $guarantor->relationship;
+            $guarantor->email = $request->email ?? $guarantor->email;
+            $guarantor->update();
+            
+            DB::commit();
+            return response(['message' => 'Loan Application updated successfully'], Response::HTTP_ACCEPTED);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response($th, Response::HTTP_NOT_ACCEPTABLE);
+        }
     }
 
     public function destroy($id)
@@ -104,24 +111,31 @@ class LoanApplicationController extends Controller
         return response($status, Response::HTTP_OK);
     }
 
-    public function statusPending()
+    public function getStatus($status)
     {
-        $loan = LoanApplication::where("loan_status", "pending")->get();
+        $loan = LoanApplication::where("loan_status", $status);
 
         return response($loan, Response::HTTP_OK);
     }
 
-    public function statusAccepted()
-    {
-        $loan = LoanApplication::where("loan_status", "accepted")->get();
+    // public function statusPending()
+    // {
+    //     $loan = LoanApplication::where("loan_status", "pending")->get();
 
-        return response($loan, Response::HTTP_OK);
-    }
+    //     return response($loan, Response::HTTP_OK);
+    // }
 
-    public function statusFailed()
-    {
-        $loan = LoanApplication::where("loan_status", "failed")->get();
+    // public function statusAccepted()
+    // {
+    //     $loan = LoanApplication::where("loan_status", "accepted")->get();
 
-        return response($loan, Response::HTTP_OK);
-    }
+    //     return response($loan, Response::HTTP_OK);
+    // }
+
+    // public function statusFailed()
+    // {
+    //     $loan = LoanApplication::where("loan_status", "failed")->get();
+
+    //     return response($loan, Response::HTTP_OK);
+    // }
 }

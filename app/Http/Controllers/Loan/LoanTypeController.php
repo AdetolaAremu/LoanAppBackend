@@ -67,6 +67,6 @@ class LoanTypeController extends Controller
 
         $loan->delete();
 
-        return response(['message' => 'Loan type deleted successfully']);
+        return response(['message' => 'Loan type deleted successfully'], Response::HTTP_OK);
     }
 }

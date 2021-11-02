@@ -63,10 +63,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/status', [LoanApplicationController::class, 'kycCheck']);
     });
 
-    // Status table
-    Route::group(['prefix' => 'loans'], function() {
-        Route::get('/pendings', [LoanApplicationController::class, 'statusPending']);
-        Route::get('/accepted', [LoanApplicationController::class, 'statusAccepted']);
-        Route::get('/failed', [LoanApplicationController::class, 'statusFailed']);
-    });
+    // Loan Application status table
+    Route::get('/loan/{status}', [LoanApplicationController::class, 'getStatus']);
+
+    // KYC status table
+    Route::get('/kyc/{status}', [KYCController::class, 'getKYCStatus']);
 });

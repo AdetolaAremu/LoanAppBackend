@@ -101,6 +101,6 @@ class UserController extends Controller
             'data' => [
                 'permissions' => $user->permissions()
             ]
-        ]);
+        ], Response::HTTP_OK);
     }
 }

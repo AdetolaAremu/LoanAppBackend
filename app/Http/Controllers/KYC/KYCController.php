@@ -79,4 +79,13 @@ class KYCController extends Controller
 
         return response(['message' => 'Change effected successfully'], Response::HTTP_ACCEPTED);
     }
+
+    public function getKYCStatus($status)
+    {
+        Gate::authorize('view', 'users');
+
+        $kyc = KnowCustomer::where('status', $status)->get();
+
+        return response($kyc, Response::HTTP_ACCEPTED);
+    }
 }
