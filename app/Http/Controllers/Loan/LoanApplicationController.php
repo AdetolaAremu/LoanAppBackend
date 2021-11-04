@@ -14,7 +14,7 @@ class LoanApplicationController extends Controller
 {
     public function index()
     {
-        $loan = LoanApplication::with('guarantor')->get();
+        $loan = LoanApplication::with('guarantor','loanType')->get();
 
         return response($loan, Response::HTTP_OK);
     }
@@ -52,7 +52,7 @@ class LoanApplicationController extends Controller
 
     public function show($id)
     {
-        $loan = LoanApplication::find($id);
+        $loan = LoanApplication::with('guarantor','loanType')->find($id);
 
         if (!$loan) {
             return response(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
@@ -113,7 +113,7 @@ class LoanApplicationController extends Controller
 
     public function getStatus($status)
     {
-        $loan = LoanApplication::where("loan_status", $status);
+        $loan = LoanApplication::where("loan_status", $status)->withCount($status)->get();
 
         return response($loan, Response::HTTP_OK);
     }

@@ -95,8 +95,6 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        // return response($user, Response::HTTP_ACCEPTED);
-
         return (new UserResource($user))->additional([
             'data' => [
                 'permissions' => $user->permissions()

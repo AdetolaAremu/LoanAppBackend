@@ -6,22 +6,20 @@ use App\Http\Controllers\KYC\KYCController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanTypeController;
 use App\Http\Controllers\User\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // authentication
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 // country and state
 Route::get('/country', [CountryController::class, 'country']);
 Route::get('/state', [CountryController::class, 'state']);
 
-Route::middleware(['auth:api'])->group(function () {
-    
+Route::group(["middleware" => "auth:api"], function(){
     // logout
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     // user
     Route::group(['prefix' => 'users'], function() {
         Route::get('/', [UserController::class, 'index']);

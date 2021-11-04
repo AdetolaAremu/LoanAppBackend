@@ -12,9 +12,29 @@ use Illuminate\Support\Facades\Gate;
 
 class KYCController extends Controller
 {    
-    public function store(KYCRequest $request)
+    public function store(Request $request)
     {
-        KnowCustomer::create($request->all());
+        $kyc = new KnowCustomer();
+        $kyc->user_id = auth()->user()->id;
+        $kyc->country_id = $request->country_id;
+        $kyc->state_id = $request->state_id;
+        $kyc->city = $request->city;
+        $kyc->address = $request->address;
+        $kyc->identification_type = $request->identification_type;
+        $kyc->id_number = $request->id_number;
+        $kyc->nok_first_name = $request->nok_first_name;
+        $kyc->nok_last_name = $request->nok_last_name;
+        $kyc->nok_middle_name = $request->nok_middle_name;
+        $kyc->nok_email = $request->nok_email;
+        $kyc->nok_phone = $request->nok_phone;
+        $kyc->nok_country_id = $request->nok_country_id;
+        $kyc->nok_state_id = $request->nok_state_id;
+        $kyc->nok_city = $request->nok_city;
+        $kyc->nok_address = $request->nok_address;
+        $kyc->status = $request->status;
+        $kyc->rejection_reason = $request->rejection_reason;
+        dd($kyc);
+        $kyc->save();
 
         return response(['message' => 'KYC request submitted successfully'], Response::HTTP_CREATED);
     }
