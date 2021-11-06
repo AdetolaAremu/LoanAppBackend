@@ -14,7 +14,7 @@ class CountryController extends Controller
     {
         $countries = Country::get(['id', 'sortname', 'name', 'phonecode']);
     
-       return response($countries, Response::HTTP_ACCEPTED);
+        return response($countries, Response::HTTP_ACCEPTED);
     }
 
     public function state($id)

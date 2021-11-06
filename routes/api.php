@@ -13,8 +13,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 // country and state
-Route::get('/country', [CountryController::class, 'country']);
-Route::get('/state', [CountryController::class, 'state']);
+Route::get('/countries', [CountryController::class, 'country']);
+Route::get('/state/{id}', [CountryController::class, 'state']);
 
 Route::group(["middleware" => "auth:api"], function(){
     // logout
