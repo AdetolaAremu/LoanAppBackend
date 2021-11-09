@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Loan;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanApplicationRequest;
 use App\Models\LoanApplication;
+use App\Models\LoanApplicationComment;
 use App\Models\LoanGuarantor;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
 class LoanApplicationController extends Controller
 {
     public function index()
@@ -58,7 +61,7 @@ class LoanApplicationController extends Controller
             return response(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return response(['Success', $loan], Response::HTTP_OK);
+        return response($loan, Response::HTTP_OK);
     }
 
     public function update(Request $request, $id)
@@ -104,38 +107,57 @@ class LoanApplicationController extends Controller
         return response(['message' => 'Loan application deleted successfully']);
     }
 
-    public function kycCheck()
+    public function rejectLoan($id, Request $request)
     {
-        $status = auth()->user()->kyc->pluck('status');
+        $loan = LoanApplication::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'Loan Application not found']);
+        }
 
-        return response($status, Response::HTTP_OK);
+        $loan->update(['loan_status' => 'failed']);
+
+        if ($loan) {
+            
+            $request->validate(['comment' => 'required']);
+
+            $com = new LoanApplicationComment();
+            $com->loan_application_id = $loan->id;
+            $com->comment = $request->comment;
+            $com->save();
+
+            return response(['message' => 'Loan rejected'], Response::HTTP_OK);
+        }
+
+        return response(['message' => 'Action not effected'], Response::HTTP_BAD_REQUEST);
     }
+
+    public function approveLoan($id)
+    {
+        $loan = LoanApplication::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'Loan Application not found']);
+        }
+
+        $loan->update(['loan_status' => 'accepted']);
+
+        return response(['message' => 'Loan Approved'], Response::HTTP_OK);
+    }
+
+    // public function kycCheck()
+    // {
+    //     $status = auth()->user()->kyc->pluck('status');
+
+    //     return response($status, Response::HTTP_OK);
+    // }
 
     public function getStatus($status)
     {
-        $loan = LoanApplication::where("loan_status", $status)->withCount($status)->get();
+        Gate::authorize('view', 'users');
+
+        $loan = LoanApplication::where("loan_status", $status)->with('user')->get();
 
         return response($loan, Response::HTTP_OK);
     }
-
-    // public function statusPending()
-    // {
-    //     $loan = LoanApplication::where("loan_status", "pending")->get();
-
-    //     return response($loan, Response::HTTP_OK);
-    // }
-
-    // public function statusAccepted()
-    // {
-    //     $loan = LoanApplication::where("loan_status", "accepted")->get();
-
-    //     return response($loan, Response::HTTP_OK);
-    // }
-
-    // public function statusFailed()
-    // {
-    //     $loan = LoanApplication::where("loan_status", "failed")->get();
-
-    //     return response($loan, Response::HTTP_OK);
-    // }
 }

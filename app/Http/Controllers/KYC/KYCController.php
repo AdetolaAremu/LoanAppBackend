@@ -62,21 +62,6 @@ class KYCController extends Controller
         return response($kyc, Response::HTTP_OK);
     }
 
-    // public function update(UpdateKYCRequest $request, $id)
-    // {
-    //     $kyc = KnowCustomer::find($id);
-
-    //     if (!$kyc) {
-    //         return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
-    //     }
-
-    //     $kyc->delete();
-
-    //     KnowCustomer::create($request->all());
-
-    //     return response(['message' => 'KYC updated successfully'], Response::HTTP_ACCEPTED);
-    // }
-
     public function destroy($id)
     {
         Gate::authorize('view', 'users');
@@ -104,14 +89,14 @@ class KYCController extends Controller
 
         $kyc->update($request->only('status'));
 
-        return response(['message' => 'Change effected successfully'], Response::HTTP_ACCEPTED);
+        return response(['message' => 'Action effected successfully'], Response::HTTP_ACCEPTED);
     }
 
     public function getKYCStatus($status)
     {
         Gate::authorize('view', 'users');
 
-        $kyc = KnowCustomer::where('status', $status)->get();
+        $kyc = KnowCustomer::where('status', $status)->with('user')->get();
 
         return response($kyc, Response::HTTP_ACCEPTED);
     }

@@ -56,7 +56,8 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::get('/', [LoanApplicationController::class, 'index']);
         Route::post('/', [LoanApplicationController::class, 'store']);
         Route::get('/{id}', [LoanApplicationController::class, 'show']);
-        Route::put('/{id}', [LoanApplicationController::class, 'update']);
+        Route::put('/approve/{id}', [LoanApplicationController::class, 'approveLoan']);
+        Route::put('/reject/{id}', [LoanApplicationController::class, 'rejectLoan']);
         Route::delete('/{id}', [LoanApplicationController::class, 'destroy']);
         Route::get('/status', [LoanApplicationController::class, 'kycCheck']);
     });

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class LoanApplicationComment extends Model
 {
     use HasFactory;
+
+    protected $guarded = ['id'];
+
+    public function loan()
+    {
+        return $this->belongsTo(LoanApplication::class);
+    }
 }
