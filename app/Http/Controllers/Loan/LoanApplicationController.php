@@ -55,7 +55,7 @@ class LoanApplicationController extends Controller
 
     public function show($id)
     {
-        $loan = LoanApplication::with('guarantor','loanType')->find($id);
+        $loan = LoanApplication::with('guarantor','loanType','comment')->find($id);
 
         if (!$loan) {
             return response(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);

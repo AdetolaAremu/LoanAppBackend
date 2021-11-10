@@ -92,12 +92,37 @@ class KYCController extends Controller
         return response(['message' => 'Action effected successfully'], Response::HTTP_ACCEPTED);
     }
 
-    public function getKYCStatus($status)
+    
+    public function rejectKYC($id, Request $request)
+    {
+        $loan = KnowCustomer::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'KYC not found']);
+        }
+    
+        return response(['message' => 'KYC rejected'], Response::HTTP_OK);
+    }
+
+    public function approveLoan($id)
+    {
+        $loan = KnowCustomer::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'KYC not found']);
+        }
+
+        $loan->update(['status' => 'accepted']);
+
+        return response(['message' => 'Loan Approved'], Response::HTTP_OK);
+    }
+
+    public function getStatus($status)
     {
         Gate::authorize('view', 'users');
 
-        $kyc = KnowCustomer::where('status', $status)->with('user')->get();
+        $loan = KnowCustomer::where("status", $status)->with('user')->get();
 
-        return response($kyc, Response::HTTP_ACCEPTED);
+        return response($loan, Response::HTTP_OK);
     }
 }

@@ -25,4 +25,9 @@ class LoanApplication extends Model
     {
         return $this->hasOne(LoanGuarantor::class);
     }
+
+    public function comment()
+    {
+        return $this->hasOne(LoanApplicationComment::class);
+    }
 }
