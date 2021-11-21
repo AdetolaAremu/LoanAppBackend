@@ -17,7 +17,7 @@ class LoanApplicationController extends Controller
 {
     public function index()
     {
-        $loan = LoanApplication::with('guarantor','loanType')->get();
+        $loan = LoanApplication::with('guarantor','loanType','comment')->get();
 
         return response($loan, Response::HTTP_OK);
     }
@@ -145,12 +145,18 @@ class LoanApplicationController extends Controller
         return response(['message' => 'Loan Approved'], Response::HTTP_OK);
     }
 
-    // public function kycCheck()
-    // {
-    //     $status = auth()->user()->kyc->pluck('status');
+    public function recycleLoan($id)
+    {
+        $loan = LoanApplication::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'Loan Application not found']);
+        }
 
-    //     return response($status, Response::HTTP_OK);
-    // }
+        $loan->update(['loan_status' => 'pending']);
+
+        return response(['message' => 'Loan Application recycled, check pending bucket!']);
+    }
 
     public function getStatus($status)
     {

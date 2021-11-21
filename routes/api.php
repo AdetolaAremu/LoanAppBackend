@@ -29,6 +29,8 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
 
+    Route::put('user/update', [UserController::class, 'updateInfo']);
+
     // get logged in user
     Route::get('user/currentuser', [UserController::class, 'currentUser']);
 
@@ -39,7 +41,9 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::get('/{id}', [KYCController::class, 'show']);
         Route::get('/', [KYCController::class, 'index']);
         Route::delete('/{id}', [KYCController::class, 'destroy']);
-        Route::put('/admin/{id}', [KYCController::class, 'verifyUser']);
+        Route::put('/approve/{id}', [KYCController::class, 'approveKYC']);
+        Route::put('/reject/{id}', [KYCController::class, 'rejectKYC']);
+        Route::put('/recycle/{id}', [KYCController::class, 'recycleKYC']);
     });
 
     // loan types
@@ -58,6 +62,7 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::get('/{id}', [LoanApplicationController::class, 'show']);
         Route::put('/approve/{id}', [LoanApplicationController::class, 'approveLoan']);
         Route::put('/reject/{id}', [LoanApplicationController::class, 'rejectLoan']);
+        Route::put('/recycle/{id}', [LoanApplicationController::class, 'recycleLoan']);
         Route::delete('/{id}', [LoanApplicationController::class, 'destroy']);
         Route::get('/status', [LoanApplicationController::class, 'kycCheck']);
     });
@@ -66,5 +71,5 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::get('/loan/{status}', [LoanApplicationController::class, 'getStatus']);
 
     // KYC status table
-    Route::get('/kyc/{status}', [KYCController::class, 'getKYCStatus']);
+    Route::get('/kyc/{status}', [KYCController::class, 'getStatus']);
 });

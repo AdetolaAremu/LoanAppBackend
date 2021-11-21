@@ -14,10 +14,12 @@ class KYCController extends Controller
 {    
     public function store(Request $request)
     {
+        $exist = KnowCustomer::where('user_id', auth()->user()->id)->first();
+
         $check = KnowCustomer::count();
         if ($check === 1 || $check < 1) {
             
-            KnowCustomer::truncate();
+            $exist->delete();
 
             $kyc = new KnowCustomer();
             $kyc->user_id = auth()->user()->id;
@@ -53,7 +55,8 @@ class KYCController extends Controller
 
     public function show($id)
     {
-        $kyc = KnowCustomer::find($id);
+        $kyc = KnowCustomer::with('user','country:id,name','nokcountry:id,name',
+        'state:id,name','nokstate:id,name')->find($id);
 
         if (!$kyc) {
             return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
@@ -77,34 +80,7 @@ class KYCController extends Controller
         return response(['message' => 'KYC deleted successfully'], Response::HTTP_ACCEPTED);
     }
 
-    public function verifyUser($id, Request $request)
-    {
-        Gate::authorize('view', 'users');
-        
-        $kyc = KnowCustomer::find($id);
-
-        if (!$kyc) {
-            return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        $kyc->update($request->only('status'));
-
-        return response(['message' => 'Action effected successfully'], Response::HTTP_ACCEPTED);
-    }
-
-    
-    public function rejectKYC($id, Request $request)
-    {
-        $loan = KnowCustomer::find($id);
-        
-        if (!$loan) {
-            return response(['message' => 'KYC not found']);
-        }
-    
-        return response(['message' => 'KYC rejected'], Response::HTTP_OK);
-    }
-
-    public function approveLoan($id)
+    public function approveKYC($id)
     {
         $loan = KnowCustomer::find($id);
         
@@ -112,9 +88,35 @@ class KYCController extends Controller
             return response(['message' => 'KYC not found']);
         }
 
-        $loan->update(['status' => 'accepted']);
+        $loan->update(['status' => 'successful']);
 
-        return response(['message' => 'Loan Approved'], Response::HTTP_OK);
+        return response(['message' => 'KYC Approved'], Response::HTTP_OK);
+    }
+
+    public function rejectKYC($id)
+    {
+        $loan = KnowCustomer::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'KYC not found']);
+        }
+
+        $loan->update(['status' => 'failed']);
+
+        return response(['message' => 'KYC rejected!']);
+    }
+
+    public function recycleKYC($id)
+    {
+        $loan = KnowCustomer::find($id);
+        
+        if (!$loan) {
+            return response(['message' => 'KYC not found']);
+        }
+
+        $loan->update(['status' => 'pending']);
+
+        return response(['message' => 'KYC recycled, check pending bucket!']);
     }
 
     public function getStatus($status)

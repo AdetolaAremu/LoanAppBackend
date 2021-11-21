@@ -61,7 +61,7 @@ class UserController extends Controller
 
         $user = Auth::user();
 
-        $user->update($request->only('first_name','last_name','email'));
+        $user->update($request->only('first_name','last_name','email', 'phone number'));
 
         return response(['message' => 'Info Update successfully']);
     }
