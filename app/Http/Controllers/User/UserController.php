@@ -50,7 +50,7 @@ class UserController extends Controller
 
         $user->update($request->only('role_id'));
 
-        return response(['message' => 'Role updated successfully']);
+        return response(['message' => 'Role updated successfully'], Response::HTTP_OK);
     }
 
     public function updateInfo(Request $request)
@@ -63,7 +63,7 @@ class UserController extends Controller
 
         $user->update($request->only('first_name','last_name','email', 'phone number'));
 
-        return response(['message' => 'Info Update successfully']);
+        return response(['message' => 'Info Update successfully'], Response::HTTP_OK);
     }
 
     public function updatePassword(Request $request)
@@ -79,7 +79,7 @@ class UserController extends Controller
             'password' => Hash::make($request->input('password'))
         ]);
 
-        return response(['message' => 'Password update successfully']);
+        return response(['message' => 'Password update successfully'], Response::HTTP_OK);
     }
 
     public function destroy($id)
@@ -88,7 +88,7 @@ class UserController extends Controller
         
         User::destroy($id);
 
-        return response(['message' => 'User deleted successfully']);
+        return response(['message' => 'User deleted successfully'], Response::HTTP_OK);
     }
 
     public function currentUser()

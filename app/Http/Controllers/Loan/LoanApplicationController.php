@@ -104,7 +104,7 @@ class LoanApplicationController extends Controller
 
         $loan->delete();
 
-        return response(['message' => 'Loan application deleted successfully']);
+        return response(['message' => 'Loan application deleted successfully'], Response::HTTP_OK);
     }
 
     public function rejectLoan($id, Request $request)
@@ -112,7 +112,7 @@ class LoanApplicationController extends Controller
         $loan = LoanApplication::find($id);
         
         if (!$loan) {
-            return response(['message' => 'Loan Application not found']);
+            return response(['message' => 'Loan Application not found'], Response::HTTP_NOT_FOUND);
         }
 
         $loan->update(['loan_status' => 'failed']);
@@ -137,10 +137,12 @@ class LoanApplicationController extends Controller
         $loan = LoanApplication::find($id);
         
         if (!$loan) {
-            return response(['message' => 'Loan Application not found']);
+            return response(['message' => 'Loan Application not found'], Response::HTTP_NOT_FOUND);
         }
 
         $loan->update(['loan_status' => 'accepted']);
+
+        $loan->update(['active' => 1 ]);
 
         return response(['message' => 'Loan Approved'], Response::HTTP_OK);
     }
@@ -150,12 +152,12 @@ class LoanApplicationController extends Controller
         $loan = LoanApplication::find($id);
         
         if (!$loan) {
-            return response(['message' => 'Loan Application not found']);
+            return response(['message' => 'Loan Application not found'], Response::HTTP_NOT_FOUND);
         }
 
         $loan->update(['loan_status' => 'pending']);
 
-        return response(['message' => 'Loan Application recycled, check pending bucket!']);
+        return response(['message' => 'Loan Application recycled, check pending bucket!'], Response::HTTP_OK);
     }
 
     public function getStatus($status)

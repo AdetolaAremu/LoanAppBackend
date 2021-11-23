@@ -20,7 +20,8 @@ class LoanTypeResource extends JsonResource
             'amount' => $this->amount,
             'repayment_amount' => $this->repayment_amount,
             'repayment_days' => $this->repayment_days,
-            'status' => $this->status
+            'status' => $this->status,
+            // "loanApplication" => $this->loanApplication
         ];
     }
 }

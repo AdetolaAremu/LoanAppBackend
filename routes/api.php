@@ -5,6 +5,7 @@ use App\Http\Controllers\Country\CountryController;
 use App\Http\Controllers\KYC\KYCController;
 use App\Http\Controllers\Loan\LoanApplicationController;
 use App\Http\Controllers\Loan\LoanTypeController;
+use App\Http\Controllers\Statistics\StatisticsController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -72,4 +73,12 @@ Route::group(["middleware" => "auth:api"], function(){
 
     // KYC status table
     Route::get('/kyc/{status}', [KYCController::class, 'getStatus']);
+
+    // Count of KYC and Loan Application status i.e pending, successful, failed
+    Route::get('/kyc-count', [StatisticsController::class, 'kycCount']); 
+    Route::get('/loan-count', [StatisticsController::class, 'loanCount']);
+
+    // All dashboard statistics
+    Route::get('/dashboard-count', [StatisticsController::class, 'dashboardCount']);
+    Route::get('/latest-users', [StatisticsController::class, 'latestUsers']);
 });

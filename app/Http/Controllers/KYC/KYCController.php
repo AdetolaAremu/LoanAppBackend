@@ -98,12 +98,12 @@ class KYCController extends Controller
         $loan = KnowCustomer::find($id);
         
         if (!$loan) {
-            return response(['message' => 'KYC not found']);
+            return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
         }
 
         $loan->update(['status' => 'failed']);
 
-        return response(['message' => 'KYC rejected!']);
+        return response(['message' => 'KYC rejected!'], Response::HTTP_OK);
     }
 
     public function recycleKYC($id)
@@ -111,12 +111,12 @@ class KYCController extends Controller
         $loan = KnowCustomer::find($id);
         
         if (!$loan) {
-            return response(['message' => 'KYC not found']);
+            return response(['message' => 'KYC not found'], Response::HTTP_NOT_FOUND);
         }
 
         $loan->update(['status' => 'pending']);
 
-        return response(['message' => 'KYC recycled, check pending bucket!']);
+        return response(['message' => 'KYC recycled, check pending bucket!'], Response::HTTP_OK);
     }
 
     public function getStatus($status)

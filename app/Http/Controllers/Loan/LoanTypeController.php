@@ -17,9 +17,11 @@ class LoanTypeController extends Controller
 {
     public function index()
     {
-        $loan = LoanType::get();
+        $loan = LoanType::withCount("loanApplication")->get();
 
-        return LoanTypeResource::collection($loan , Response::HTTP_ACCEPTED);
+        return $loan;
+
+        // return LoanTypeResource::collection($loan, Response::HTTP_ACCEPTED);
     }
 
     public function store(LoanTypeRequest $request)
