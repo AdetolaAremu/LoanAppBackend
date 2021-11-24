@@ -75,8 +75,8 @@ Route::group(["middleware" => "auth:api"], function(){
     Route::get('/kyc/{status}', [KYCController::class, 'getStatus']);
 
     // Count of KYC and Loan Application status i.e pending, successful, failed
-    Route::get('/kyc-count', [StatisticsController::class, 'kycCount']); 
-    Route::get('/loan-count', [StatisticsController::class, 'loanCount']);
+    Route::get('/status-count', [StatisticsController::class, 'allStatus']); 
+    // Route::get('/loan-count', [StatisticsController::class, 'loanCount']);
 
     // All dashboard statistics
     Route::get('/dashboard-count', [StatisticsController::class, 'dashboardCount']);

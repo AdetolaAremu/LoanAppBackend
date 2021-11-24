@@ -97,6 +97,7 @@ class UserController extends Controller
 
         return (new UserResource($user))->additional([
             'data' => [
+                'role' => $user->role,
                 'permissions' => $user->permissions()
             ]
         ], Response::HTTP_OK);

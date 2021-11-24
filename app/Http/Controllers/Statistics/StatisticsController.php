@@ -14,12 +14,16 @@ use Illuminate\Http\Response;
 class StatisticsController extends Controller
 {
     // count of all kyc status
-    public function kycCount()
+    public function allStatus()
     {
-        $count = array("Pending" => 0, "Successful" => 0, "Failed" => 0);
-        $count['Pending'] = KnowCustomer::where('status', 'pending')->count();
-        $count['Successful'] = KnowCustomer::where('status', 'successful')->count();
-        $count['Failed'] = KnowCustomer::where('status', 'failed')->count();
+        $count = array("kycPending" => 0, "kycSuccessful" => 0, "kycFailed" => 0, "loanPending" => 0, "loanSuccessful" => 0, "loanFailed" => 0);
+        $count['kycPending'] = KnowCustomer::where('status', 'pending')->count();
+        $count['kycSuccessful'] = KnowCustomer::where('status', 'successful')->count();
+        $count['kycFailed'] = KnowCustomer::where('status', 'failed')->count();
+
+        $count['loanPending'] = LoanApplication::where('loan_status', 'pending')->count();
+        $count['loanSuccessful'] = LoanApplication::where('loan_status', 'accepted')->count();
+        $count['loanFailed'] = LoanApplication::where('loan_status', 'failed')->count();
 
         return response($count, Response::HTTP_OK);
     }
@@ -47,6 +51,7 @@ class StatisticsController extends Controller
         return response($count, Response::HTTP_OK);
     }
 
+    // get the last users that registered
     public function latestUsers()
     {
         $user = User::latest()->take(5)->get();
