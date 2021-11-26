@@ -17,13 +17,15 @@ class LoanApplicationController extends Controller
 {
     public function index()
     {
-        $loan = LoanApplication::with('guarantor','loanType','comment')->get();
+        $loan = LoanApplication::where('user_id', auth()->user()->id)
+            ->with('guarantor','loanType','comment')->latest()->get();
 
         return response($loan, Response::HTTP_OK);
     }
 
     public function store(LoanApplicationRequest $request)
     {
+
         DB::beginTransaction();
         
         try {
@@ -44,6 +46,8 @@ class LoanApplicationController extends Controller
             $guarantor->relationship = $request->relationship;
             $guarantor->email = $request->email;
             $guarantor->save();
+
+            
         
             DB::commit();
             return response(['message' => 'Loan Application created successfully, it is now under review'], Response::HTTP_CREATED);
