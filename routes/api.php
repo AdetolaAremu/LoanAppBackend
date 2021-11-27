@@ -81,4 +81,6 @@ Route::group(["middleware" => "auth:api"], function(){
     // All dashboard statistics
     Route::get('/dashboard-count', [StatisticsController::class, 'dashboardCount']);
     Route::get('/latest-users', [StatisticsController::class, 'latestUsers']);
+
+    Route::get('/test', [LoanApplicationController::class, 'pluckUserStatus']);
 });

@@ -146,7 +146,7 @@ class LoanApplicationController extends Controller
 
         $loan->update(['loan_status' => 'accepted']);
 
-        $loan->update(['active' => 1 ]);
+        $loan->update(['active' => 1]);
 
         return response(['message' => 'Loan Approved'], Response::HTTP_OK);
     }
@@ -171,5 +171,12 @@ class LoanApplicationController extends Controller
         $loan = LoanApplication::where("loan_status", $status)->with('user')->get();
 
         return response($loan, Response::HTTP_OK);
+    }
+
+    public function pluckUserStatus()
+    {
+        $loan = LoanApplication::where('user_id', auth()->user()->id)->pluck('loan_status');
+
+        return $loan;
     }
 }
