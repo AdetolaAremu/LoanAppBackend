@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::routes();
-        // Passport::tokensExpireIn(now()->addDays(5));
+        Passport::tokensExpireIn(now()->addDays(5));
 
         Gate::define('view', function(User $user, $model){
             return $user->hasAccess("view_{$model}");

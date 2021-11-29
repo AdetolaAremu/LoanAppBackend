@@ -16,13 +16,18 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    // get all users
     public function index()
     {
+        // only a user with view users permissions can view this resource
         Gate::authorize('view', 'users');
-        
-        return UserResource::collection(User::get(), Response::HTTP_OK);
+
+        $user = User::get();
+
+        return response($user, Response::HTTP_OK);
     }
 
+    // get a user with additional resource such as role and permissions
     public function show($id)
     {
         $user = User::find($id);
@@ -33,11 +38,13 @@ class UserController extends Controller
 
         return (new UserResource($user))->additional([
             'data' => [
+                'role' => $user->role,
                 'permissions' => $user->permissions()
             ]
         ]);
     }
 
+    // update role
     public function updateRole(Request $request, $id)
     {
         Gate::authorize('view', 'users');
@@ -53,6 +60,7 @@ class UserController extends Controller
         return response(['message' => 'Role updated successfully'], Response::HTTP_OK);
     }
 
+    // update information of a looged in user
     public function updateInfo(Request $request)
     {
         $request->validate([
@@ -66,6 +74,7 @@ class UserController extends Controller
         return response(['message' => 'Info Update successfully'], Response::HTTP_OK);
     }
 
+    // update the password of a logged in user
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -82,6 +91,7 @@ class UserController extends Controller
         return response(['message' => 'Password update successfully'], Response::HTTP_OK);
     }
 
+    // delete user
     public function destroy($id)
     {
         Gate::authorize('view', 'users');
@@ -91,6 +101,7 @@ class UserController extends Controller
         return response(['message' => 'User deleted successfully'], Response::HTTP_OK);
     }
 
+    // get logged in user with roles, the frontend doesn't need the permissions collection
     public function currentUser()
     {
         $user = Auth::user();
@@ -98,7 +109,7 @@ class UserController extends Controller
         return (new UserResource($user))->additional([
             'data' => [
                 'role' => $user->role,
-                'permissions' => $user->permissions()
+                // 'permissions' => $user->permissions()
             ]
         ], Response::HTTP_OK);
     }

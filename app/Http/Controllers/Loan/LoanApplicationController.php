@@ -15,17 +15,29 @@ use Illuminate\Support\Facades\Gate;
 
 class LoanApplicationController extends Controller
 {
+    // get all loan applications
     public function index()
     {
-        $loan = LoanApplication::where('user_id', auth()->user()->id)
-            ->with('guarantor','loanType','comment')->latest()->get();
+        // only a user with view users permissions can view this resource
+        Gate::authorize('view', 'users');
+
+        $loan = LoanApplication::get();
 
         return response($loan, Response::HTTP_OK);
     }
 
+    // get logged user loan applications
+    public function getUserLoan()
+    {
+        $loan = LoanApplication::where('user_id', auth()->user()->id)
+            ->with('user','guarantor','loanType','comment')->latest()->get();
+
+        return response($loan, Response::HTTP_OK);
+    }
+
+    // create a new loan request, it will create data in two tables
     public function store(LoanApplicationRequest $request)
     {
-
         DB::beginTransaction();
         
         try {
@@ -46,9 +58,7 @@ class LoanApplicationController extends Controller
             $guarantor->relationship = $request->relationship;
             $guarantor->email = $request->email;
             $guarantor->save();
-
-            
-        
+      
             DB::commit();
             return response(['message' => 'Loan Application created successfully, it is now under review'], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
@@ -57,9 +67,10 @@ class LoanApplicationController extends Controller
         }
     }
 
+    // get a loan application resource
     public function show($id)
     {
-        $loan = LoanApplication::with('guarantor','loanType','comment')->find($id);
+        $loan = LoanApplication::with('user','guarantor','loanType','comment')->find($id);
 
         if (!$loan) {
             return response(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
@@ -68,6 +79,7 @@ class LoanApplicationController extends Controller
         return response($loan, Response::HTTP_OK);
     }
 
+    // update an application resource
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
@@ -98,6 +110,7 @@ class LoanApplicationController extends Controller
         }
     }
 
+    // delete a loan application resource
     public function destroy($id)
     {
         $loan = LoanApplication::find($id);
@@ -111,6 +124,7 @@ class LoanApplicationController extends Controller
         return response(['message' => 'Loan application deleted successfully'], Response::HTTP_OK);
     }
 
+    // reject loan request with a comment
     public function rejectLoan($id, Request $request)
     {
         $loan = LoanApplication::find($id);
@@ -136,6 +150,7 @@ class LoanApplicationController extends Controller
         return response(['message' => 'Action not effected'], Response::HTTP_BAD_REQUEST);
     }
 
+    // approve a loan request
     public function approveLoan($id)
     {
         $loan = LoanApplication::find($id);
@@ -151,6 +166,8 @@ class LoanApplicationController extends Controller
         return response(['message' => 'Loan Approved'], Response::HTTP_OK);
     }
 
+    // if a loan request has been rejected but due to an appeal from the user to review the rejection,
+    // the admin can recycle the kyc so it can be worked on again, it will go to te pending bucket
     public function recycleLoan($id)
     {
         $loan = LoanApplication::find($id);
@@ -163,7 +180,9 @@ class LoanApplicationController extends Controller
 
         return response(['message' => 'Loan Application recycled, check pending bucket!'], Response::HTTP_OK);
     }
-
+ 
+    // used in filtering status such as pending, successful etc
+    // parameter used is $status which can be set to any of status
     public function getStatus($status)
     {
         Gate::authorize('view', 'users');
@@ -173,10 +192,15 @@ class LoanApplicationController extends Controller
         return response($loan, Response::HTTP_OK);
     }
 
+    // get loans that are accepted and have not be repaid
     public function pluckUserStatus()
     {
-        $loan = LoanApplication::where('user_id', auth()->user()->id)->pluck('loan_status');
+        $loans = LoanApplication::where('user_id', auth()->user()->id)
+                ->where('loan_status', 'accepted')
+                ->where('repaid', 0)
+                ->select('loan_status', 'repaid')
+                ->get();
 
-        return $loan;
+        return response($loans, Response::HTTP_OK);
     }
 }
