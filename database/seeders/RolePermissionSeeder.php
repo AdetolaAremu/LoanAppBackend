@@ -17,7 +17,7 @@ class RolePermissionSeeder extends Seeder
     public function run()
     {
         $permissions = Permission::all();
-        $admin = Role::whereName('Admin')->first();
+        $admin = Role::whereName('admin')->first();
 
         foreach ($permissions as $permission) {
                 DB::table('role_permissions')->insert([
@@ -26,10 +26,9 @@ class RolePermissionSeeder extends Seeder
             ]);
         }
 
-        $user = Role::whereName('User')->first();
-
+        $user = Role::whereName('user')->first();
         foreach ($permissions as $permission) {
-            if (!in_array($permission->name, ['create_roles'])) {
+            if (!in_array($permission->name, ['view_users'])) {
                     DB::table('role_permissions')->insert([
                     'role_id' => $admin->id,
                     'permission_id' => $permission->id

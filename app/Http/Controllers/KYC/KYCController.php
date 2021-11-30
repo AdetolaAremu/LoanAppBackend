@@ -18,7 +18,9 @@ class KYCController extends Controller
         // if the kyc of a user is rejected, on creating another one, the first one will be deleted
         $exist = KnowCustomer::where('user_id', auth()->user()->id)->first();
 
-        $exist->delete();
+        if ($exist) {
+            $exist->delete();
+        }
 
         $kyc = new KnowCustomer();
         $kyc->user_id = auth()->user()->id;
@@ -135,5 +137,14 @@ class KYCController extends Controller
         $loan = KnowCustomer::where("status", $status)->with('user')->get();
 
         return response($loan, Response::HTTP_OK);
+    }
+
+    public function getMyKYC()
+    {
+        $kyc = KnowCustomer::where('user_id', auth()->user()->id)
+            ->with('user','country','nokcountry','state','nokstate')
+            ->first();
+
+        return response($kyc, Response::HTTP_OK);
     }
 }

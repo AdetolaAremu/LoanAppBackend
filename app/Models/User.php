@@ -57,4 +57,14 @@ class User extends Authenticatable
     {
         return $this->permissions()->contains($access);
     }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
 }

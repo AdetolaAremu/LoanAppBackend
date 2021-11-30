@@ -47,6 +47,9 @@ Route::group(["middleware" => "auth:api"], function(){
         Route::put('/recycle/{id}', [KYCController::class, 'recycleKYC']);
     });
 
+    // get logged in user KYC
+    Route::get('/mykyc', [KYCController::class, 'getMyKYC']);
+
     // loan types
     Route::group(['prefix' => 'loan-types'], function() {
         Route::get('/', [LoanTypeController::class, 'index']);
@@ -58,7 +61,7 @@ Route::group(["middleware" => "auth:api"], function(){
 
     // loan application
     Route::group(['prefix' => 'loan-application'], function() {
-        Route::get('/', [LoanApplicationController::class, 'index']);
+        Route::get('/', [LoanApplicationController::class, 'getUserLoan']);
         Route::post('/', [LoanApplicationController::class, 'store']);
         Route::get('/{id}', [LoanApplicationController::class, 'show']);
         Route::put('/approve/{id}', [LoanApplicationController::class, 'approveLoan']);

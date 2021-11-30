@@ -106,10 +106,12 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
+        $kyc = KnowCustomer::where('user_id', $user->id)->first();
+
         return (new UserResource($user))->additional([
             'data' => [
                 'role' => $user->role,
-                // 'permissions' => $user->permissions()
+                'permissions' => $user->permissions()
             ]
         ], Response::HTTP_OK);
     }
