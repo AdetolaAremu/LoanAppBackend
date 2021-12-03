@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 // authentication
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
 // country and state
 Route::get('/countries', [CountryController::class, 'country']);

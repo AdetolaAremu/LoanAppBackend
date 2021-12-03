@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanTypeRequest;
 use App\Http\Requests\UpdateLoanTypeRequest;
 use App\Http\Resources\LoanTypeResource;
-use App\Models\LoanApplication;
 use App\Models\LoanType;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
