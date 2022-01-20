@@ -41,7 +41,7 @@ class AuthController extends Controller
             return response(['token' => $token], Response::HTTP_OK)->withCookie($cookie);
         }
 
-        return response(["error" => "Username or Password does not match"], Response::HTTP_BAD_REQUEST);     
+        return response(["error" => "Email or Password does not match"], Response::HTTP_BAD_REQUEST);     
     }
 
     // logout user

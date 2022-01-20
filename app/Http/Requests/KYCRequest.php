@@ -24,7 +24,6 @@ class KYCRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
             'country_id' => 'required',
             'state_id' => 'required',
             'city' => 'required',
@@ -36,7 +35,8 @@ class KYCRequest extends FormRequest
             'nok_email' => 'email',
             'nok_phone' => 'required|numeric',
             'nok_country_id' => 'required',
-            'nok_state_id' => 'required'
+            'nok_state_id' => 'required',
+            'nok_city' => 'required'
         ];
     }
 }

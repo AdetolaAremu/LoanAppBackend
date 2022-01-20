@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 
 class KYCController extends Controller
 {    
-    public function store(Request $request)
+    public function store(KYCRequest $request)
     {
         // this is to make sure that a user can only have one KYC
         // if the kyc of a user is rejected, on creating another one, the first one will be deleted
