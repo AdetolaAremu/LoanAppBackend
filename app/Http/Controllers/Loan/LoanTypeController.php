@@ -16,7 +16,7 @@ class LoanTypeController extends Controller
     public function index()
     {
         // only a user with view users permissions can view this resource
-        Gate::authorize('view', 'users');
+//         Gate::authorize('view', 'users');
 
         $loan = LoanType::withCount("loanApplication")->get();
 
